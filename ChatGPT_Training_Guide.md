@@ -95,7 +95,7 @@ Put the following in its project description
 A hands-on Claude training workspace for non-technical office users. Explore
 effective prompting, document analysis, Excel reporting, presentation creation,
 website reviews and simple application development through guided exercises,
-reusable prompts and practical verification checks. 
+reusable prompts and practical verification checks.
 ```
 
 Put the following in its instructions
