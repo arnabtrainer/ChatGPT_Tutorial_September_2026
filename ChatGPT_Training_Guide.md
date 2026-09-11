@@ -162,47 +162,111 @@ ChatGPT conversations were imported.
 
 ## 🔵 Module 2 — Document Analysis and Interactive Artifacts
 
-**Teach:** Source-grounded extraction, percentage change, assumptions and testing an interactive output. An Artifact is a standalone piece of content or an interactive tool that can be refined separately from the conversation. [6]
+**Teach:** Source-grounded extraction, monthly comparisons, percentage change, slab-based charges, rebates and rounding. Create and test an interactive HTML calculator.
 
-**Prepare:** Attach `01_Electricity_Bills.pdf`. It contains two fictional bills, not real tariffs or tax rules.
+**Prepare:** Start a new chat inside **Claude Workshop** and attach [`01_Electricity_Bills_Oct2025_Sep2026.pdf`](sandbox:/mnt/data/01_Electricity_Bills_Oct2025_Sep2026.pdf). It contains **12 fictional monthly bills, October 2025–September 2026, across 24 pages**. All rates and personal details are training examples. Use the same chat for both prompts.
 
-### ✅ Prompt 2 — Compare the bills
+### ✅ Prompt 2 — Analyze and compare the monthly bills
 
 ```text
-Read both pages of the attached electricity-bill PDF. Create a comparison table
-for billing period, billing days, usage in kWh, unit rate, fixed charge,
-subtotal, tax and total. Cite the page supporting each month's values.
+Read all 24 pages of the attached 12-month electricity-bill PDF. Use only this
+file; do not apply real-world tariffs or the earlier two-bill example.
 
-Recalculate each total. Calculate August minus July, and the percentage change
-using July as the denominator, for both usage and total bill. Explain why those
-two percentages differ. Give three practical consumption-reduction ideas, but
-do not claim the bills identify particular appliances or prove the cause of
-increased usage. Flag missing or unclear information. Answer in chat only.
+Create a 12-row summary showing account month, billing days, usage in kWh,
+kWh per day, Net Amount, rounded e-payment payable, closing carry-forward
+and supporting PDF page numbers. Organize by account month, not issue date.
+Do not count repeated consumption-history entries as additional bills.
+
+Verify meter-reading differences and recalculate each bill using its printed
+energy slabs, fixed charge, FPPAS, duty, meter rent, adjustments, rebates and
+rounding rules. Confirm each month's opening adjustment equals the previous
+month's closing carry-forward. Report any discrepancies.
+
+Calculate total annual consumption and the sum of rounded e-payment payable.
+Identify the highest and lowest months for consumption and payable amount.
+Exclude security deposits and previous-payment records. Do not treat the sum
+of Gross or Net Amount as annual cost: carried balances can be counted twice.
+Reconcile current-period charges less both rebates against rounded e-payments
+plus the final carry-forward, assuming timely e-payment.
+
+Compare September 2026 with August 2026 for usage, rounded e-payment payable
+and kWh per day. Calculate change as September minus August, and percentage
+change as change divided by August's value × 100. Use unrounded daily averages
+in calculations. Explain why the percentage changes differ.
+
+Give three practical consumption-reduction ideas, but do not claim these bills
+identify appliances or prove causes. Flag missing information. Answer in chat
+only and keep explanations brief.
 ```
 
-**Check:** July **INR 1,870**; August **INR 2,222**; increase **INR 352 / 18.82%**. Usage increases from **200 to 240 kWh / 20%**. Both periods have 31 days.
+**Annual check:** **646 kWh**; rounded e-payment payable totals **INR 4,240.00**; final carry-forward **INR 0.71**. Charges after both rebates reconcile to **INR 4,240.71**. Highest: **June 2026 — 92 kWh / INR 590**. Lowest: **January 2026 — 24 kWh / INR 170**.
+
+**Comparison check:** August appears on **PDF pages 21–22**; September on **pages 23–24**.
+
+| Measure                   | August 2026 | September 2026 |      September vs August |
+| ------------------------- | ----------: | -------------: | -----------------------: |
+| Billing days              |          31 |             30 |                   −1 day |
+| Usage                     |      69 kWh |         54 kWh |    **−15 kWh / −21.74%** |
+| Usage per day             |  2.2258 kWh |     1.8000 kWh |              **−19.13%** |
+| Rounded e-payment payable |  INR 450.00 |     INR 360.00 | **−INR 90.00 / −20.00%** |
+
+**Trainer note:** **Net Amount and rounded e-payment payable are different figures.** Carry-forward is an unpaid rounding balance, not an additional consumption charge. The PDF describes simulated payments, not evidence of actual payments.
 
 ### ✅ Prompt 3 — Build a bill calculator
 
 ```text
-Create a single self-contained HTML Artifact named Bill_Calculator.html using
-this fictional formula:
-Total = (usage_kWh × unit_rate + fixed_charge) × (1 + tax_percent / 100).
+Create a single self-contained HTML Artifact named Bill_Calculator.html,
+following the fictional calculation rules printed in the attached bills.
 
-Provide labeled numeric inputs, a Calculate control, Reset and a breakdown of
-energy charge, fixed charge, tax and total. Defaults: 200 kWh, INR 8 per kWh,
-INR 100 fixed charge and 10% tax. Reject blank, non-numeric or negative inputs;
-accept zero. Use readable text and keyboard-operable controls. No external
-libraries, accounts, network calls or tracking. Mark all rates as fictional.
-Provide the downloadable HTML and a short test checklist. Report which tests
-you actually ran, and mark browser tests not run as untested.
+Inputs:
+- Usage U: whole-number kWh; default 48.
+- Opening carry-in C: INR, up to two decimal places; default 0.00.
+
+Keep these training rates fixed:
+Energy = min(U, 25) × 5.18 + max(U - 25, 0) × 5.69.
+Fixed charge = 1.8 kVA × INR 15 = INR 27.
+FPPAS = (Energy + Fixed charge) × 8.20%, rounded half-up to two decimals.
+Government duty = INR 0. Meter rent = INR 10.
+Gross = Energy + Fixed charge + FPPAS + Duty + Meter rent + C.
+Net Amount = Gross - INR 1.75 timely-payment rebate.
+Net Amount for e-payment = Net Amount - INR 1.75 additional rebate.
+Standard rounded payable = floor(Net Amount / 10) × 10.
+Rounded e-payment payable = floor(Net Amount for e-payment / 10) × 10.
+Closing carry-forward = Net Amount for e-payment - rounded e-payment payable.
+
+Assume timely e-payment. Explain that carry-forward uses the e-payment route
+and becomes the next month's opening carry-in. Do not apply the old flat-rate
+formula or add 10% tax.
+
+Provide Calculate and Reset controls. Show both energy slabs, every charge,
+both rebates and the separate payable amounts. Use decimal-safe arithmetic,
+two-decimal money formatting, readable text and keyboard-operable controls.
+
+Reject blank, non-numeric or negative inputs, fractional kWh and carry-in
+with more than two decimal places. Accept zero. Reset restores 48 kWh and
+INR 0.00 carry-in.
+
+Label the tool "SAMPLE — FOR TRAINING ONLY; not actual utility tariffs."
+Use no external libraries, accounts, network calls or tracking.
+Provide the downloadable HTML and a short test checklist. Test against the
+October, August and September bills, plus zero usage and the 25/26-unit
+boundary. Report tests actually run; mark browser tests not run as untested.
 ```
 
-**Guidance:** Open the downloaded HTML in a browser and change the inputs yourself.
+**Guidance:** Download the HTML, open it in a browser and enter the test values below. Save it in `Outputs`. For each monthly test, enter **both** usage and carry-in.
 
-**Check:** Default **1,870**; 240 kWh **2,222**; zero usage **110** with other defaults unchanged; negative usage rejected; Reset restores defaults.
+| Test                    |  Usage | Carry-in | Net Amount | Rounded e-payment payable | Closing carry-forward |
+| ----------------------- | -----: | -------: | ---------: | ------------------------: | --------------------: |
+| October 2025 — defaults | 48 kWh |     0.00 |     319.18 |                **310.00** |              **7.43** |
+| August 2026             | 69 kWh |     9.62 |     458.09 |                **450.00** |              **6.34** |
+| September 2026          | 54 kWh |     6.34 |     362.46 |                **360.00** |              **0.71** |
+| Zero-usage test         |  0 kWh |     0.00 |      37.46 |                 **30.00** |              **5.71** |
 
-**Scope choice:** This calculator is a smaller classroom alternative to the trainer's rent-versus-buy simulator. The original simulator remains an optional extension in the original archive, not a required file here.
+*All monetary values are INR. The zero-usage result is calculated from the training formula, not a separate bill.*
+
+**Additional checks:** At **25 kWh**, energy charge is **INR 129.50**; at **26 kWh**, it is **INR 135.19**. Negative or fractional usage is rejected; Reset restores defaults.
+
+**Scope choice:** This calculator remains a smaller classroom alternative to the trainer’s rent-versus-buy simulator. No additional practice file is required.
 
 ---
 
