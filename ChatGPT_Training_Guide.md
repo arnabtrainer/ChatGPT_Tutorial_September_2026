@@ -114,7 +114,7 @@ checking the result.
 
 ### ✅ Import ChatGPT Context into Claude
 
-<img width="580" height="422" alt="image" src="https://github.com/user-attachments/assets/189eeb5c-fe0a-4436-aee8-8aeea0f0f859" />
+<img width="800" height="500" alt="image" src="https://github.com/user-attachments/assets/74ff7736-6bc3-4033-8382-3e30d8a55428" />
 
 **Important:** This transfers useful memory and context—not all ChatGPT chats as separate Claude conversations. It does not recreate chat history or transfer attachments. [14]
 
