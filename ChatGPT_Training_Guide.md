@@ -16,6 +16,8 @@ Keep this guide open. Use only `Practice_Files`; save everything learners genera
 | 5 | Research and UI/UX/accessibility review | A two-case website audit report | 40 min |
 | 6 | Claude Code, requirements and testing | A small highlight-saving extension | 60 min |
 
+<img width="400" height="500" alt="image" src="https://github.com/user-attachments/assets/82fec647-8c2d-42f2-9ec3-92222886b133" />
+
 ### 🔴 Your six practice files
 
 All paths below are inside `Practice_Files`.
